@@ -35,7 +35,7 @@ describe("App Component", () => {
             .first();
         const expectedData = [
             {
-                id: 0
+                id: 1
             }
         ];
         button.simulate('click');
@@ -45,5 +45,27 @@ describe("App Component", () => {
 
     })
 
+    it(`adds a new gift to 'state' when clicking the 'add' gift button to be 1 after 2 clicks`, () => {
+
+        const wrapper = mount(<App {...props}/>);
+
+        const button = wrapper
+            .find('.btn-add')
+            .first();
+        const expectedData = [
+            {
+                id: 1
+            }, {
+                id: 2
+            }
+        ];
+        button.simulate('click');
+        button.simulate('click');
+
+        console.log(wrapper.state());
+
+        expect(wrapper.state('gifts')).toEqual(expectedData);
+
+    })
     afterEach(() => {})
 });
