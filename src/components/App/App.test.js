@@ -17,55 +17,66 @@ describe("App Component", () => {
         const props = {};
         const wrapper = mount(<App {...props}/>);
 
-        //        const {gifts} = wrapper.instance.state
-
-        console.log(wrapper.instance);
-        console.log(wrapper.state());
-
-        // expect(gifts).toEqual([]);
-
+        expect(wrapper.state('gifts')).toEqual([]);
     })
 
-    it(`adds a new gift to 'state' when clicking the 'add' gift button`, () => {
-
-        const wrapper = mount(<App {...props}/>);
-
-        const button = wrapper
-            .find('.btn-add')
-            .first();
+    it(`addButton updates state gifts`, () => {
+        const wrapper = shallow(<App {...props}/>);
         const expectedData = [
             {
                 id: 1
             }
         ];
-        button.simulate('click');
+        wrapper
+            .instance()
+            .addButton();
 
-        console.log("HYello");
         expect(wrapper.state('gifts')).toEqual(expectedData);
 
     })
 
-    it(`adds a new gift to 'state' when clicking the 'add' gift button to be 1 after 2 clicks`, () => {
+    describe(`Clicking 'add gift' button`, () => {
 
-        const wrapper = mount(<App {...props}/>);
-
+        const wrapper = shallow(<App {...props}/>);
         const button = wrapper
             .find('.btn-add')
             .first();
-        const expectedData = [
-            {
-                id: 1
-            }, {
-                id: 2
-            }
-        ];
-        button.simulate('click');
-        button.simulate('click');
 
-        console.log(wrapper.state());
+        beforeEach(() => {
+            button.simulate('click');
 
-        expect(wrapper.state('gifts')).toEqual(expectedData);
+        })
 
+        afterEach(() => {
+            // Restore the default sandbox here
+            wrapper.setState({gifts: []})
+        });
+
+        it(`adds a new gift to 'state' when clicking the 'add' gift button`, () => {
+
+            const expectedData = [
+                {
+                    id: 1
+                }
+            ];
+
+            expect(wrapper.state('gifts')).toEqual(expectedData);
+
+        })
+
+        it(`Adds a new gift to the rendered list when clicking the 'add gift' button`, () => {
+
+            const newGifts = wrapper
+                .find('.gift-list')
+                .children();
+
+            expect(newGifts.length).toEqual(1);
+
+        })
+
+        it('creates a gift componment', () => {
+            expect(wrapper.find('Gift').exists()).toBe(true);
+        })
     })
-    afterEach(() => {})
+
 });
