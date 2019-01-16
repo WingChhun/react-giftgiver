@@ -11,17 +11,17 @@ class App extends Component {
   }
 
   addButton = () => {
-    const { gifts } = this.state;
+    const gifts = this.state.gifts.map(gift => gift.id);
 
-    const ids = gifts.map(gift => gift.id);
-
-    const max_id = ids.length > 0 ? Math.max(...ids) : 0;
+    const max_id = gifts.length > 0 ? Math.max(...gifts) : 0;
 
     gifts.push({
       id: max_id + 1
     });
 
     this.setState({ gifts });
+
+    debugger;
   };
 
   /*
@@ -36,6 +36,11 @@ class App extends Component {
     this.setState({ gifts: filteredGifts });
   };
 
+  renderGifts = () => {
+    return this.state.gifts.map(gift => (
+      <Gift key={gift.id} gift={gift} removeGift={this.removeGift} />
+    ));
+  };
   render() {
     const { gifts } = this.state;
 
@@ -43,11 +48,7 @@ class App extends Component {
       <div>
         <h2>Gift Giver</h2>
 
-        <div className='gift-list'>
-          {gifts.map(gift => (
-            <Gift key={gift.id} />
-          ))}
-        </div>
+        <div className='gift-list'>{this.renderGifts()}</div>
 
         <Button className='btn-add' onClick={this.addButton}>
           Add Gift

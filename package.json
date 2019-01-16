@@ -29,7 +29,8 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/*.{js,jsx}",
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
       "!**/coverage/**.js",
       "!**/node_modules/**",
       "!**/vendor/**"
