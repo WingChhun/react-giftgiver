@@ -1,82 +1,86 @@
 import React from 'react';
-import {shallow, mount} from 'enzyme';
-import App from "./App";
+import { shallow, mount } from 'enzyme';
+import App from './App';
 
 const props = {
-    gifts: []
-}
-const app = shallow(<App {...props}/>);
+  gifts: []
+};
+const app = shallow(<App {...props} />);
 
-describe("App Component", () => {
-    it("renders properly", () => {
-        expect(app).toMatchSnapshot();
-    })
+describe('App Component', () => {
+  it('renders properly', () => {
+    expect(app).toMatchSnapshot();
+  });
 
-    it("Initializes state with an empty list of gifts", () => {
+  it('Initializes state with an empty list of gifts', () => {
+    const props = {};
+    const wrapper = mount(<App {...props} />);
 
-        const props = {};
-        const wrapper = mount(<App {...props}/>);
+    expect(wrapper.state('gifts')).toEqual([]);
+  });
 
-        expect(wrapper.state('gifts')).toEqual([]);
-    })
+  it(`addButton updates state gifts`, () => {
+    const wrapper = shallow(<App {...props} />);
+    const expectedData = [
+      {
+        id: 1
+      }
+    ];
+    wrapper.instance().addButton();
 
-    it(`addButton updates state gifts`, () => {
-        const wrapper = shallow(<App {...props}/>);
-        const expectedData = [
-            {
-                id: 1
-            }
-        ];
-        wrapper
-            .instance()
-            .addButton();
+    expect(wrapper.state('gifts')).toEqual(expectedData);
+  });
 
-        expect(wrapper.state('gifts')).toEqual(expectedData);
+  describe(`Clicking 'add gift' button`, () => {
+    const wrapper = shallow(<App {...props} />);
+    const button = wrapper.find('.btn-add').first();
 
-    })
+    beforeEach(() => {
+      button.simulate('click');
+    });
 
-    describe(`Clicking 'add gift' button`, () => {
+    afterEach(() => {
+      // Restore the default sandbox here
+      wrapper.setState({ gifts: [] });
+    });
 
-        const wrapper = shallow(<App {...props}/>);
-        const button = wrapper
-            .find('.btn-add')
-            .first();
+    it(`adds a new gift to 'state' when clicking the 'add' gift button`, () => {
+      const expectedData = [
+        {
+          id: 1
+        }
+      ];
 
-        beforeEach(() => {
-            button.simulate('click');
+      expect(wrapper.state('gifts')).toEqual(expectedData);
+    });
 
-        })
+    it(`Adds a new gift to the rendered list when clicking the 'add gift' button`, () => {
+      const newGifts = wrapper.find('.gift-list').children();
 
-        afterEach(() => {
-            // Restore the default sandbox here
-            wrapper.setState({gifts: []})
-        });
+      expect(newGifts.length).toEqual(1);
+    });
 
-        it(`adds a new gift to 'state' when clicking the 'add' gift button`, () => {
+    it('creates a gift componment', () => {
+      expect(wrapper.find('Gift').exists()).toBe(true);
+    });
 
-            const expectedData = [
-                {
-                    id: 1
-                }
-            ];
+    //TODO: Remove a gift testing
+    describe('When a user wants to remove the added gift', () => {
+      let wrapper = shallow(<App {...props} />);
 
-            expect(wrapper.state('gifts')).toEqual(expectedData);
+      //Note: Access the instance of the wrapper: occurence  of the app component within our tests
 
-        })
+      //Note: App.instance(): call removeGift() function within the instance()
 
-        it(`Adds a new gift to the rendered list when clicking the 'add gift' button`, () => {
+      beforeEach(() => {
+        //TODO: removeGift does not exist yet
+        wrapper.instance().removeGift(1);
+      });
 
-            const newGifts = wrapper
-                .find('.gift-list')
-                .children();
-
-            expect(newGifts.length).toEqual(1);
-
-        })
-
-        it('creates a gift componment', () => {
-            expect(wrapper.find('Gift').exists()).toBe(true);
-        })
-    })
-
+      it(`removes gift with id of '1' to be removed from gifst array`, () => {
+        //$ Expect to be an empty array because removal
+        expect(wrapper.state().gifts).toEqual([]);
+      });
+    });
+  });
 });
